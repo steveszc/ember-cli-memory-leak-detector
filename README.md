@@ -1,7 +1,7 @@
 ember-cli-memory-leak-detector
 ==============================================================================
 
-[Short description of the addon.]
+An ember-cli addon that captures and analyzes a heap snapshot after you tests have finished running in the browser, in order to detect memory leaks. 
 
 
 Compatibility
