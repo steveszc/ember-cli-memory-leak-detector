@@ -1,6 +1,6 @@
 import Service from "@ember/service";
 
-export default Service.extend({
+export default class NonleakyService extends Service.extend({
   init() {
     this._super(...arguments);
     this._data = Object.create(null);
@@ -21,4 +21,4 @@ export default Service.extend({
   has(key) {
     return key in this._data;
   },
-});
+}) {}
