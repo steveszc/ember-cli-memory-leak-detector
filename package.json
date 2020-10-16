@@ -1,7 +1,7 @@
 {
   "name": "ember-cli-memory-leak-detector",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Detects memory leaks when running your test suite in Chrome",
   "keywords": [
     "ember-addon"
   ],
@@ -32,6 +32,7 @@
     "@glimmer/tracking": "^1.0.1",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
+    "chrome-remote-interface": "^0.28.2",
     "ember-auto-import": "^1.6.0",
     "ember-cli": "~3.21.2",
     "ember-cli-dependency-checker": "^3.2.0",
@@ -51,6 +52,7 @@
     "eslint": "^7.8.0",
     "eslint-plugin-ember": "^8.13.0",
     "eslint-plugin-node": "^11.1.0",
+    "headless-devtools": "^2.0.1",
     "loader.js": "^4.7.0",
     "npm-run-all": "^4.1.5",
     "qunit-dom": "^1.4.0"

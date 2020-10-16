@@ -1,0 +1,45 @@
+<script>
+  async function detectMemoryLeaks(callback) {
+    const classes = 'Container';
+    const title = encodeURI(document.title);
+    const response = await fetch(`/detect_memory_leak?classes=${classes}&title=${title}`);
+    const json = await response.json();
+
+    if (callback) {
+      callback();
+    }
+  }
+
+  function canCaptureHeapSnapshot() {
+    // testing for chrome
+    return (
+      window.chrome !== null
+      && window.navigator.vendor === 'Google Inc.'
+      && !window.opr // Opera
+      && !window.navigator.userAgent.includes('Edge') // MS Edge
+      && !window.navigator.userAgent.includes('CriOS') // chrome iOS
+    );
+  }
+
+  if (canCaptureHeapSnapshot()) {
+    if (typeof Testem !== "undefined" && Testem.afterTests) {
+      Testem.afterTests(async function (config, data, callback) {
+        console.log('testem afterTests');
+        await detectMemoryLeaks(callback);
+      });
+    } else if (typeof QUnit !== "undefined") {
+      QUnit.done(function () {
+        console.log('qunit done');
+        detectMemoryLeaks();
+      });
+    } else if (typeof Mocha !== "undefined" && typeof after !== "undefined") {
+      after(function (done) {
+        detectMemoryLeaks(done);
+      });
+    } else {
+      console.warn('No testing framework found for ember-cli-code-coverage to integrate with.');
+    }
+  } else {
+    console.warn('Memory leak detection is currently available only in the Google Chrome browser');
+  }
+</script>
