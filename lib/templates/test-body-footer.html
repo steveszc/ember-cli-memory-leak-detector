@@ -1,8 +1,7 @@
 <script>
   async function detectMemoryLeaks(callback) {
-    const classes = 'Container';
     const title = encodeURI(document.title);
-    const response = await fetch(`/detect_memory_leak?classes=${classes}&title=${title}`);
+    const response = await fetch(`/detect_memory_leak?title=${title}`);
     const json = await response.json();
 
     if (callback) {

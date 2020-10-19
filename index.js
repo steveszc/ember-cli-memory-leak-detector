@@ -22,13 +22,13 @@ module.exports = {
 
   serverMiddleware({ app }) {
     if (this._isMemoryLeakDetectionEnabled()) {
-      attachMiddleware(app);
+      attachMiddleware({ app, addon: this });
     }
   },
 
   testemMiddleware(app) {
     if (this._isMemoryLeakDetectionEnabled()) {
-      attachMiddleware(app);
+      attachMiddleware({ app, addon: this });
     }
   },
 
