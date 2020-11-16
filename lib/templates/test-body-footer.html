@@ -23,12 +23,10 @@
   if (canCaptureHeapSnapshot()) {
     if (typeof Testem !== "undefined" && Testem.afterTests) {
       Testem.afterTests(async function (config, data, callback) {
-        console.log('testem afterTests');
         await detectMemoryLeaks(callback);
       });
     } else if (typeof QUnit !== "undefined") {
       QUnit.done(function () {
-        console.log('qunit done');
         detectMemoryLeaks();
       });
     } else if (typeof Mocha !== "undefined" && typeof after !== "undefined") {
@@ -36,7 +34,7 @@
         detectMemoryLeaks(done);
       });
     } else {
-      console.warn('No testing framework found for ember-cli-code-coverage to integrate with.');
+      console.warn('No testing framework found for ember-cli-memory-leak-detector to integrate with.');
     }
   } else {
     console.warn('Memory leak detection is currently available only in the Google Chrome browser');
