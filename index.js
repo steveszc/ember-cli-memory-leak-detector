@@ -12,7 +12,7 @@ module.exports = {
       "ember-cli-memory-leak-detector": {
         enabled: true,
         error: true,
-        debugPort: 9222,
+        remoteDebuggingPort: 9222,
         ignoreClasses: ["App"],
       },
     };
