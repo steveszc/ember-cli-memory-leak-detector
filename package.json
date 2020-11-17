@@ -1,15 +1,18 @@
 {
   "name": "ember-cli-memory-leak-detector",
-  "version": "0.0.0",
-  "description": "Detects memory leaks when running your test suite in Chrome",
+  "version": "0.1.1",
+  "description": "Automatic memory leak detection for ember apps",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/truecoach/ember-cli-memory-leak-detector.git"
+  },
   "license": "MIT",
-  "author": "",
+  "author": "Steve Szczecina",
   "directories": {
-    "doc": "doc",
+    "lib": "lib",
     "test": "tests"
   },
   "scripts": {
@@ -25,7 +28,9 @@
   "dependencies": {
     "ember-cli-babel": "^7.22.1",
     "ember-cli-htmlbars": "^5.3.1",
-    "heapsnapshot": "0.0.6"
+    "heapsnapshot": "0.0.6",
+    "chrome-remote-interface": "^0.28.2",
+    "glob": "^7.1.6"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
@@ -33,7 +38,6 @@
     "@glimmer/tracking": "^1.0.1",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "chrome-remote-interface": "^0.28.2",
     "ember-auto-import": "^1.6.0",
     "ember-cli": "~3.21.2",
     "ember-cli-dependency-checker": "^3.2.0",
@@ -53,7 +57,6 @@
     "eslint": "^7.8.0",
     "eslint-plugin-ember": "^8.13.0",
     "eslint-plugin-node": "^11.1.0",
-    "glob": "^7.1.6",
     "loader.js": "^4.7.0",
     "npm-run-all": "^4.1.5",
     "qunit-dom": "^1.4.0"
@@ -66,5 +69,10 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
-  }
+  },
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/truecoach/ember-cli-memory-leak-detector/issues"
+  },
+  "homepage": "https://github.com/truecoach/ember-cli-memory-leak-detector#readme"
 }
