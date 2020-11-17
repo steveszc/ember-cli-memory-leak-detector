@@ -13,6 +13,7 @@ module.exports = {
         enabled: true,
         error: true,
         debugPort: 9222,
+        ignoreClasses: ["App"],
       },
     };
   },
