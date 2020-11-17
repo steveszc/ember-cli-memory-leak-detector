@@ -4,6 +4,10 @@
     const response = await fetch(`/detect_memory_leak?title=${title}`);
     const json = await response.json();
 
+    if (json.error) {
+      throw new Error(json.error);
+    }
+
     if (callback) {
       callback();
     }
@@ -22,8 +26,8 @@
 
   if (canCaptureHeapSnapshot()) {
     if (typeof Testem !== "undefined" && Testem.afterTests) {
-      Testem.afterTests(async function (config, data, callback) {
-        await detectMemoryLeaks(callback);
+      Testem.afterTests(function (config, data, callback) {
+        detectMemoryLeaks(callback);
       });
     } else if (typeof QUnit !== "undefined") {
       QUnit.done(function () {
