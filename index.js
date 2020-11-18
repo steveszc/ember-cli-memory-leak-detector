@@ -1,7 +1,7 @@
 "use strict";
 
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
 const attachMiddleware = require("./lib/attach-middleware");
 
 module.exports = {
