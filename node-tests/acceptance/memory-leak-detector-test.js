@@ -11,10 +11,9 @@ describe("Acceptance | Memory leak detection", function () {
       await execa("ember", ["test"]);
     } catch ({ exitCode, stderr }) {
       assert.strictEqual(exitCode, 1, "Exits with non-zero status code");
-      assert.match(stderr, /LeakyService/, "Reports the leaked service");
-      assert.doesNotMatch(
-        stderr,
-        /NonleakyService/,
+      assert(stderr.includes("LeakyService"), "Reports the leaked service");
+      assert(
+        !stderr.includes("NonleakyService"),
         "Only reports the leaked service"
       );
     }
