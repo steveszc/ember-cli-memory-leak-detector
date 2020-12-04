@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-memory-leak-detector",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Automatic memory leak detection for ember apps",
   "keywords": [
     "ember-addon"
@@ -67,7 +67,7 @@
     "rimraf": "^3.0.2"
   },
   "engines": {
-    "node": "12.* || >= 14"
+    "node": "10.* || 12.* || >= 14"
   },
   "ember": {
     "edition": "octane"
