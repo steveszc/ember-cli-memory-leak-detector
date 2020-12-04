@@ -67,7 +67,7 @@
     "rimraf": "^3.0.2"
   },
   "engines": {
-    "node": "12.* || >= 14"
+    "node": "10.* || 12.* || >= 14"
   },
   "ember": {
     "edition": "octane"
