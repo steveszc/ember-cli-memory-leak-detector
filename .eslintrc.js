@@ -33,7 +33,8 @@ module.exports = {
         'testem.js',
         'blueprints/*/index.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/dummy/config/**/*.js',
+        'node-tests/**/*.js'
       ],
       excludedFiles: [
         'addon/**',
@@ -46,10 +47,11 @@ module.exports = {
       },
       env: {
         browser: false,
-        node: true
+        node: true,
+        mocha: true
       },
-      plugins: ['node'],
-      extends: ['plugin:node/recommended']
+      plugins: ['node', 'mocha'],
+      extends: ['plugin:node/recommended', 'plugin:mocha/recommended']
     }
   ]
 };

@@ -11,29 +11,17 @@ describe("Acceptance | Memory leak detection", function () {
       await execa("ember", ["test"]);
     } catch ({ exitCode, stderr }) {
       assert.strictEqual(exitCode, 1, "Exits with non-zero status code");
-      assert.strictEqual(
-        stderr.includes("LeakyService"),
-        true,
-        "Reports the leaked service"
-      );
-      assert.strictEqual(
-        stderr.includes("NonleakyService"),
-        false,
-        "Does not reports the unleaked service"
+      assert.match(stderr, /LeakyService/, "Reports the leaked service");
+      assert.doesNotMatch(
+        stderr,
+        /NonleakyService/,
+        "Only reports the leaked service"
       );
     }
   });
 
   it("passes tests if no memory leaks are detected", async function () {
-    let { exitCode, stdout } = await execa("ember", [
-      "test",
-      "--filter=nonleaky",
-    ]);
+    let { exitCode } = await execa("ember", ["test", "--filter=nonleaky"]);
     assert.strictEqual(exitCode, 0, "Exits with a zero status code");
-    assert.strictEqual(
-      stdout.includes("ember-cli-memory-leak-detector: All clear"),
-      true,
-      "Reports that no leaks were detected"
-    );
   });
 });

@@ -21,7 +21,7 @@
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
     "start": "ember serve",
-    "test": "npm-run-all lint:* test:*",
+    "test": "npm-run-all lint:* test:node",
     "test:ember": "ember test",
     "test:ember-compatibility": "ember try:each",
     "test:node": "mocha 'node-tests/**/*-test.js'"
@@ -57,6 +57,7 @@
     "ember-try": "^1.4.0",
     "eslint": "^7.8.0",
     "eslint-plugin-ember": "^8.13.0",
+    "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-node": "^11.1.0",
     "execa": "^5.0.0",
     "loader.js": "^4.7.0",
