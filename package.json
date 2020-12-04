@@ -21,16 +21,17 @@
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
     "start": "ember serve",
-    "test": "npm-run-all lint:* test:*",
+    "test": "npm-run-all lint:* test:node",
     "test:ember": "ember test",
-    "test:ember-compatibility": "ember try:each"
+    "test:ember-compatibility": "ember try:each",
+    "test:node": "mocha 'node-tests/**/*-test.js'"
   },
   "dependencies": {
+    "chrome-remote-interface": "^0.28.2",
     "ember-cli-babel": "^7.22.1",
     "ember-cli-htmlbars": "^5.3.1",
-    "heapsnapshot": "0.0.6",
-    "chrome-remote-interface": "^0.28.2",
-    "glob": "^7.1.6"
+    "glob": "^7.1.6",
+    "heapsnapshot": "0.0.6"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
@@ -56,10 +57,14 @@
     "ember-try": "^1.4.0",
     "eslint": "^7.8.0",
     "eslint-plugin-ember": "^8.13.0",
+    "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-node": "^11.1.0",
+    "execa": "^5.0.0",
     "loader.js": "^4.7.0",
+    "mocha": "^8.2.1",
     "npm-run-all": "^4.1.5",
-    "qunit-dom": "^1.4.0"
+    "qunit-dom": "^1.4.0",
+    "rimraf": "^3.0.2"
   },
   "engines": {
     "node": "10.* || >= 12"

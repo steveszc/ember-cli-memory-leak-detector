@@ -22,7 +22,8 @@ module.exports = {
     if (
       type === "test-body-footer" &&
       config["ember-cli-memory-leak-detector"] &&
-      config["ember-cli-memory-leak-detector"].enabled
+      config["ember-cli-memory-leak-detector"].enabled &&
+      this.isEnabled()
     ) {
       const template = fs
         .readFileSync(
@@ -36,10 +37,19 @@ module.exports = {
   },
 
   serverMiddleware({ app }) {
-    attachMiddleware({ app, addon: this });
+    if (this.isEnabled()) {
+      attachMiddleware({ app, addon: this });
+    }
   },
 
   testemMiddleware(app) {
-    attachMiddleware({ app, addon: this });
+    if (this.isEnabled()) {
+      attachMiddleware({ app, addon: this });
+    }
+  },
+
+  isEnabled() {
+    const isDirectDependency = this.parent === this.project;
+    return isDirectDependency;
   },
 };
