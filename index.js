@@ -32,9 +32,13 @@ module.exports = {
     }
   },
 
+  readConfig() {
+    return this.project.config()[this.name];
+  },
+
   isEnabled() {
     const isDirectDependency = this.parent === this.project;
-    const { enabled } = this.project.config()[this.name];
+    const { enabled } = this.readConfig();
     return isDirectDependency && enabled;
   },
 };
