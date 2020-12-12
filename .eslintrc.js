@@ -29,7 +29,7 @@ module.exports = {
         '.template-lintrc.js',
         'ember-cli-build.js',
         'index.js',
-        'lib/attach-middleware.js',
+        'lib/**/*.js',
         'testem.js',
         'blueprints/*/index.js',
         'config/**/*.js',
