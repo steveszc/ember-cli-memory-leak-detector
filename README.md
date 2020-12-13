@@ -56,7 +56,9 @@ Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. Thi
 Usage
 ------------------------------------------------------------------------------
 
-Whenever you run your tests in Chrome, this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app's ES classes. If any app classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
+Whenever you run your tests in Chrome via Testem (via `ember test` or `ember test --server`), this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app or addon's ES classes. If any of your app or addon's classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
+
+Note: Memory leak detection relies on Chrome's remote debugging API, so it is not possible to detect memory leaks when running `ember server` and then visiting the `localhost:4200/tests` in Chrome, unless you start Chrome from the command line like so: `chrome.exe --remote-debugging-port=9222 --user-data-dir=remote-profile`
 
 **The effecitveness of this addon is dependent on:**
 1. **The coverage of your test suite.** If leaky code exists in your app but is not exercised by your tests then this add-on can not detect that leaky code.
