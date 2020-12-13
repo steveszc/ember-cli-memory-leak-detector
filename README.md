@@ -48,7 +48,7 @@ By default, an error is thrown when a leak is detected, causing test failure. Se
 Configures which port to connect to the testem Chrome instance. This value must match the `--remote-debugging-port` flag set in your app's `testem.js`
 
 4. `ignoreClasses`: (default `["App"]`)
-By default, the addon will discover all class names in your app and detect them in the heap snapshot. Use this to ignore specific classes that you expect to leak or plan to fix later. `App` should always be ignored since it will cause false positives in Ember's test environment.
+By default, the addon will discover all class names in your app and throw a test error if it detects any of them in the heap snapshot. Use this option to ignore specific classes that you expect to leak or plan to fix later. If any of these ignored classes are leaked they will be output as a warning in the test output. `App` should always be ignored since it will cause false positives in Ember's test environment.
 
 5. `writeSnapshot`: (default `false`)
 Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. This is helpful for fixing memory leaks, since the file can be uploaded into Chrome DevTool's Memory panel for analysis.
@@ -56,7 +56,9 @@ Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. Thi
 Usage
 ------------------------------------------------------------------------------
 
-Whenever you run your tests in Chrome, this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app's ES classes. If any app classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
+Whenever you run your tests in Chrome via Testem (via `ember test` or `ember test --server`), this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app or addon's ES classes. If any of your app or addon's classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
+
+Note: Memory leak detection relies on Chrome's remote debugging API, so it is not possible to detect memory leaks when running `ember server` and then visiting the `localhost:4200/tests` in Chrome, unless you start Chrome from the command line like so: `chrome.exe --remote-debugging-port=9222 --user-data-dir=remote-profile`
 
 **The effecitveness of this addon is dependent on:**
 1. **The coverage of your test suite.** If leaky code exists in your app but is not exercised by your tests then this add-on can not detect that leaky code.
