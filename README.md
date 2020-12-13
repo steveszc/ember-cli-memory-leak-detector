@@ -48,7 +48,7 @@ By default, an error is thrown when a leak is detected, causing test failure. Se
 Configures which port to connect to the testem Chrome instance. This value must match the `--remote-debugging-port` flag set in your app's `testem.js`
 
 4. `ignoreClasses`: (default `["App"]`)
-By default, the addon will discover all class names in your app and detect them in the heap snapshot. Use this to ignore specific classes that you expect to leak or plan to fix later. `App` should always be ignored since it will cause false positives in Ember's test environment.
+By default, the addon will discover all class names in your app and throw a test error if it detects any of them in the heap snapshot. Use this option to ignore specific classes that you expect to leak or plan to fix later. If any of these ignored classes are leaked they will be output as a warning in the test output. `App` should always be ignored since it will cause false positives in Ember's test environment.
 
 5. `writeSnapshot`: (default `false`)
 Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. This is helpful for fixing memory leaks, since the file can be uploaded into Chrome DevTool's Memory panel for analysis.
