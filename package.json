@@ -7,7 +7,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/truecoach/ember-cli-memory-leak-detector.git"
+    "url": "git+https://github.com/steveszc/ember-cli-memory-leak-detector.git"
   },
   "license": "MIT",
   "author": "Steve Szczecina",
