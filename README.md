@@ -60,7 +60,7 @@ Whenever you run your tests in Chrome via Testem (via `ember test` or `ember tes
 
 Note: Memory leak detection relies on Chrome's remote debugging API, so it is not possible to detect memory leaks when running `ember server` and then visiting the `localhost:4200/tests` in Chrome, unless you start Chrome from the command line like so: `chrome.exe --remote-debugging-port=9222 --user-data-dir=remote-profile`
 
-**The effecitveness of this addon is dependent on:**
+**The effectiveness of this addon is dependent on:**
 1. **The coverage of your test suite.** If leaky code exists in your app but is not exercised by your tests then this add-on can not detect that leaky code.
 2. **Your usage of ES classes.** This addon functions by getting a list of ES classes in your app/addon code and looking for those objects in the heap snapshot. The addon can only detect leaked objects that have a class name defined in your code.
 
