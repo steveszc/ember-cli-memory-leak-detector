@@ -1,5 +1,6 @@
 [![Node.js CI](https://github.com/steveszc/ember-cli-memory-leak-detector/actions/workflows/node.js.yml/badge.svg)](https://github.com/steveszc/ember-cli-memory-leak-detector/actions/workflows/node.js.yml)
 [![Ember Observer Score](https://emberobserver.com/badges/ember-cli-memory-leak-detector.svg)](https://emberobserver.com/addons/ember-cli-memory-leak-detector)
+[![npm version](https://badge.fury.io/js/ember-cli-memory-leak-detector.svg)](https://www.npmjs.com/package/ember-cli-memory-leak-detector)
 
 ember-cli-memory-leak-detector
 ==============================================================================
