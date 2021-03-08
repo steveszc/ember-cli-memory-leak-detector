@@ -5,7 +5,7 @@
 ember-cli-memory-leak-detector
 ==============================================================================
 
-An ember-cli addon that captures and analyzes a heap snapshot after you tests have finished running in Chrome, in order to detect memory leaks.
+An ember-cli addon that captures and analyzes a heap snapshot after your tests have finished running in Chrome, in order to detect memory leaks.
 If any of your app's classes are retained in the heap, your tests will fail.
 
 Compatibility
@@ -29,18 +29,46 @@ Update `testem.js` to use a `--remote-debugging-port=9222`. 9222 is the recommen
 // testem.js
 browser_args: {
   Chrome: {
-    dev: [
-      "--remote-debugging-port=9222",
-    ],
-    ci: [
-      "--remote-debugging-port=9222",
-    ]
+    dev: ["--remote-debugging-port=9222"],
+    ci: ["--remote-debugging-port=9222"]
   },
 },
 ```
 
+Usage
+------------------------------------------------------------------------------
+
+Whenever you run your tests in Chrome via Testem (via `ember test` or `ember test --server`), this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app or addon's ES classes. If any of your app or addon's classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
+
+### CI
+
+When run in CI (via `ember test`/`ember exam`), this addon will ensure that your tests fail if a memory leak is introduced by a commit or PR.
+
+### Dev
+
+When run during development, (via `ember test --server`) memory leaks can be detected after running individual tests or modules via the QUnit UI's filter input or module select. This enables a TDD-like experience for fixing memory leaks.
+
+> **Note:** Memory leak detection currently relies on Testem and Chrome's remote debugging API, so it is not possible to detect memory leaks when running `ember server` and then visiting `localhost:4200/tests` in browser.
+
+**The effectiveness of this addon is dependent on:**
+1. **The coverage of your test suite.** If leaky code exists in your app but is not exercised by your tests then this add-on can not detect that leaky code.
+2. **Your usage of ES classes.** This addon functions by getting a list of ES classes in your app/addon code and looking for those objects in the heap snapshot. The addon can only detect leaked objects that have a class name defined in your code.
+
 Configuration
 ------------------------------------------------------------------------------
+
+```js
+// config/environment.js
+
+'ember-cli-memory-leak-detector': {
+  enabled: process.env.DETECT_MEMORY_LEAKS || false,
+  error: false,
+  remoteDebuggingPort: '9222',
+  ignoreClasses: ['ExpectedLeakyClass'],
+  writeSnapshot: true
+}
+
+```
 
 1. `enabled` (default `true`)
 Set to false to disables memory leak detection. 
@@ -56,17 +84,6 @@ By default, the addon will discover all class names in your app and throw a test
 
 5. `writeSnapshot`: (default `false`)
 Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. This is helpful for fixing memory leaks, since the file can be uploaded into Chrome DevTool's Memory panel for analysis.
-
-Usage
-------------------------------------------------------------------------------
-
-Whenever you run your tests in Chrome via Testem (via `ember test` or `ember test --server`), this addon will capture a heap snapshot after the tests complete and search the heap snapshot for any of your app or addon's ES classes. If any of your app or addon's classes are retained in heap snapshot (indicating a memory leak) your test suite will fail and a report of the retained class names will be logged.
-
-Note: Memory leak detection relies on Chrome's remote debugging API, so it is not possible to detect memory leaks when running `ember server` and then visiting the `localhost:4200/tests` in Chrome, unless you start Chrome from the command line like so: `chrome.exe --remote-debugging-port=9222 --user-data-dir=remote-profile`
-
-**The effectiveness of this addon is dependent on:**
-1. **The coverage of your test suite.** If leaky code exists in your app but is not exercised by your tests then this add-on can not detect that leaky code.
-2. **Your usage of ES classes.** This addon functions by getting a list of ES classes in your app/addon code and looking for those objects in the heap snapshot. The addon can only detect leaked objects that have a class name defined in your code.
 
 Fixing memory leaks
 ------------------------------------------------------------------------------
@@ -86,7 +103,7 @@ Most of these resources involve running some code/tests and manually capturing a
 Dealing with large heap snapshots
 -------------------------------------------------------------------------------
 
-Depending on the size of your app and the number of memory leaks it has you may find that the size of your heapsnapshot causes problems during your test runs.
+Depending on the size of your app and the number of memory leaks it has you may find that the size of your heap snapshot causes problems during your test runs.
 
 1. Consider setting the `enabled` config to an environment variable for more control over when memory leak detection is run, for example to only run in CI.
 
