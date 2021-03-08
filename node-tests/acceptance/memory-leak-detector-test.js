@@ -4,7 +4,7 @@ const assert = require("assert");
 const execa = require("execa");
 
 describe("Acceptance | Memory leak detection", function () {
-  this.timeout(30 * 1000);
+  this.timeout(60 * 1000);
 
   it("fails tests when memory leak is detected", async function () {
     try {
