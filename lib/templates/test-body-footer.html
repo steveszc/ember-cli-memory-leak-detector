@@ -1,46 +1,98 @@
 <script>
-  async function detectMemoryLeaks(callback) {
-    const title = encodeURI(document.title);
-    const response = await fetch(`/detect_memory_leak?title=${title}`);
-    const json = await response.json();
+  (function () {
+    var canCaptureHeapSnapshot =
+        window.chrome !== null
+        && window.navigator.vendor === 'Google Inc.'
+        && !window.opr // Opera
+        && !window.navigator.userAgent.includes('Edge') // MS Edge
+        && !window.navigator.userAgent.includes('CriOS') // chrome iOS
+        && typeof Testem !== "undefined";
 
-    if (json.error) {
-      throw new Error('ember-cli-memory-leak-detector: Memory leak detected');
-    }
-
-    if (callback) {
-      callback();
-    }
-  }
-
-  function canCaptureHeapSnapshot() {
-    // testing for chrome
-    return (
-      window.chrome !== null
-      && window.navigator.vendor === 'Google Inc.'
-      && !window.opr // Opera
-      && !window.navigator.userAgent.includes('Edge') // MS Edge
-      && !window.navigator.userAgent.includes('CriOS') // chrome iOS
-    );
-  }
-
-  if (canCaptureHeapSnapshot()) {
-    if (typeof Testem !== "undefined" && Testem.afterTests) {
-      Testem.afterTests(function (config, data, callback) {
-        detectMemoryLeaks(callback);
-      });
-    } else if (typeof QUnit !== "undefined") {
-      QUnit.done(function () {
-        detectMemoryLeaks();
-      });
-    } else if (typeof Mocha !== "undefined" && typeof after !== "undefined") {
-      after(function (done) {
-        detectMemoryLeaks(done);
-      });
+    if (canCaptureHeapSnapshot) {
+      if (typeof QUnit !== "undefined") {
+        Testem.afterTests(detectMemoryLeaksWithQUnit);
+      } else {
+        Testem.afterTests(detectMemoryLeaksWithTestem);
+      }
     } else {
-      console.warn('No testing framework found for ember-cli-memory-leak-detector to integrate with.');
+      console.warn('Memory leak detection is currently available only in the Google Chrome browser via Testem');
     }
-  } else {
-    console.warn('Memory leak detection is currently available only in the Google Chrome browser');
-  }
+
+    async function detectMemoryLeaksWithTestem(_, _, callback) {
+      let startTime = Date.now();
+      let title = encodeURI(document.title);
+      let response = await fetch(`/detect_memory_leak?title=${title}`);
+      let json = await response.json();
+      let endTime = Date.now();
+
+      let hasErrors = json.errorClasses.length;
+      let hasWarnings = json.warningClasses.length;
+
+      if (hasErrors) {
+        console[json.error ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+      }
+      if (hasWarnings) {
+        console.warn('The following ignored classes were detected in the heap snapshot: \n' + json.warningClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+      }
+
+      Testem.emit('test-result', {
+        name: `ember-cli-memory-leak-detector: detect memory leaks`,
+        total: 1,
+        passed: json.error && !hasErrors ? 0 : 1,
+        failed: json.error && hasErrors ? 1 : 0,
+        skipped: !json.error ? 1 : 0,
+        todo: 0,
+        runDuration: endTime - startTime
+      })
+
+      if (callback) {
+        callback();
+      }
+    }
+
+    async function detectMemoryLeaksWithQUnit(_, _, callback) {
+      await new Promise((resolve) => {
+        QUnit.module('ember-cli-memory-leak-detector', {
+          before: [],
+          beforeEach: [],
+          afterEach: [],
+          after: []
+        });
+
+        QUnit.test('detect memory leaks', Object.assign(async function(assert) {
+          let title = encodeURI(document.title);
+          let response = await fetch(`/detect_memory_leak?title=${title}`);
+          let json = await response.json();
+          let hasErrors = json.errorClasses.length;
+          let hasWarnings = json.warningClasses.length;
+
+          if (hasErrors) {
+            console[json.error ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+
+            for (const error of json.errorClasses) {
+              assert.equal(error[1], json.error ? 0 : error[1], `memory leak detected: ${error[0]} ${json.error ? '' : '(ignored)'}`)
+            }
+          }
+
+          if (hasWarnings) {
+            console.warn('The following ignored classes were detected in the heap snapshot: \n' + json.warningClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+
+            for (const warning of json.warningClasses) {
+              assert.equal(warning[1], warning[1], `${warning[0]} x${warning[1]} (ignored)`)
+            }
+          }
+
+          if (!hasErrors && !hasWarnings) {
+            assert.ok(true, 'No memory leaks detected');
+          }
+
+          resolve();
+        }, { validTest: true }))
+      });
+
+      if (callback) {
+        callback();
+      }
+    }
+  })();
 </script>

@@ -4,16 +4,16 @@ const assert = require("assert");
 const execa = require("execa");
 
 describe("Acceptance | Memory leak detection", function () {
-  this.timeout(300000);
+  this.timeout(30 * 1000);
 
   it("fails tests when memory leak is detected", async function () {
     try {
       await execa("ember", ["test"]);
-    } catch ({ exitCode, stderr }) {
+    } catch ({ exitCode, stdout }) {
       assert.strictEqual(exitCode, 1, "Exits with non-zero status code");
-      assert(stderr.includes("LeakyService"), "Reports the leaked service");
+      assert(stdout.includes("LeakyService"), "Reports the leaked service");
       assert(
-        !stderr.includes("NonleakyService"),
+        !stdout.includes("NonleakyService"),
         "Only reports the leaked service"
       );
     }
