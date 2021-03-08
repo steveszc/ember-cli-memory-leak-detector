@@ -6,7 +6,7 @@ module.exports = function (/* environment, appConfig */) {
       enabled: true,
       error: true,
       remoteDebuggingPort: 9222,
-      ignoreClasses: ["App"],
+      ignoreClasses: [],
       writeSnapshot: false,
     },
   };
