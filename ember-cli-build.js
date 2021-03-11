@@ -4,7 +4,12 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
   let app = new EmberAddon(defaults, {
-    // Add options here
+    'ember-cli-terser': {
+      terser: {
+        compress: { keep_classnames: true },
+        mangle: { keep_classnames: true }
+      }
+    }
   });
 
   /*

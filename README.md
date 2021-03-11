@@ -44,6 +44,47 @@ Whenever you run your tests in Chrome via Testem (via `ember test` or `ember tes
 
 When run in CI (via `ember test`/`ember exam`), this addon will ensure that your tests fail if a memory leak is introduced by a commit or PR.
 
+#### A note about production and ci environments 
+It may be desirable to run memory leak detection on a production build of the app using `ember test --environment=production`.
+Production builds normally mangle class names, which breaks our ability to detect memory leaks, so this needs to be disabled.
+
+```js
+//ember-cli-build.js
+
+'ember-cli-terser': {
+  terser: {
+    compress: { keep_classnames: true },
+    mangle: { keep_classnames: true }
+  }
+}
+```
+
+Production and CI environments also (by default) add IE11 as a compile target, which will result in classes being transpiled away, so we need to remove this as well.
+```js
+//config/targets.js
+
+'use strict';
+
+const browsers = [
+  'last 1 Chrome versions',
+  'last 1 Firefox versions',
+  'last 1 Safari versions'
+];
+
+// const isCI = Boolean(process.env.CI);
+// const isProduction = process.env.EMBER_ENV === 'production';
+
+// if (isCI || isProduction) {
+//   browsers.push('ie 11');
+// }
+
+module.exports = {
+  browsers
+};
+```
+
+Both of these changes can be optionally implemented using ENV variables to ensure we are only making these changes when we want to run memory leak detection.
+
 ### Dev
 
 When run during development, (via `ember test --server`) memory leaks can be detected after running individual tests or modules via the QUnit UI's filter input or module select. This enables a TDD-like experience for fixing memory leaks.
