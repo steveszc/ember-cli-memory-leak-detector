@@ -1,5 +1,16 @@
 <script>
   (function () {
+    const DETECTION_IS_NOT_POSSIBLE = 'Memory leak detection is currently available only in the Google Chrome browser via Testem';
+    const LEAKED_CLASSES = 'The following classes were retained in the heap: \n';
+    const LEAKED_IGNORED_CLASSES = 'The following ignored classes were retained in the heap: \n';
+    const MODULE_NAME = 'ember-cli-memory-leak-detector';
+    const TEST_NAME = 'detect memory leaks';
+    const NO_LEAK = 'Is not retained in the heap';
+    const LEAK = 'Is retained in the heap';
+    const DETECTION = 'memory leak detected';
+    const NO_DETECTION = 'No memory leaks detected';
+    const IGNORED = '(ignored)';
+
     var canCaptureHeapSnapshot =
         window.chrome !== null
         && window.navigator.vendor === 'Google Inc.'
@@ -15,7 +26,7 @@
         Testem.afterTests(detectMemoryLeaksWithTestem);
       }
     } else {
-      console.warn('Memory leak detection is currently available only in the Google Chrome browser via Testem');
+      console.warn(DETECTION_IS_NOT_POSSIBLE);
     }
 
     async function detectMemoryLeaksWithTestem(_, _, callback) {
@@ -25,27 +36,29 @@
       let json = await response.json();
       let endTime = Date.now();
 
-      if (json.error) {
-        throw new Error(json.error);
+      let error = json.error;
+      let shouldFail = json.failWithLeakedClasses;
+      let hasLeaks = json.leakedClasses && json.leakedClasses.length;
+      let hasIgnoredLeaks = json.ignoredLeakedClasses && json.ignoredLeakedClasses.length;
+
+      if (hasLeaks) {
+        console[shouldFail ? 'error' : 'warn'](LEAKED_CLASSES + json.leakedClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
       }
 
-      let hasErrors = json.errorClasses && json.errorClasses.length;
-      let hasWarnings = json.warningClasses && json.warningClasses.length;
-
-      if (hasErrors) {
-        console[json.failIfErrorClasses ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+      if (hasIgnoredLeaks) {
+        console.warn(LEAKED_IGNORED_CLASSES + json.ignoredLeakedClasses.map(([name, count]) => `${name} ${count}x ${IGNORED}`).join('\n') + '\n');
       }
 
-      if (hasWarnings) {
-        console.warn('The following ignored classes were detected in the heap snapshot: \n' + json.warningClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+      if (error) {
+        console.error(error);
       }
 
       Testem.emit('test-result', {
-        name: `ember-cli-memory-leak-detector: detect memory leaks`,
+        name: `${MODULE_NAME}: ${TEST_NAME}`,
         total: 1,
-        passed: json.failIfErrorClasses && !hasErrors ? 0 : 1,
-        failed: json.failIfErrorClasses && hasErrors ? 1 : 0,
-        skipped: !json.failIfErrorClasses ? 1 : 0,
+        passed: !error && shouldFail && !hasLeaks ? 0 : 1,
+        failed: error || shouldFail && hasLeaks ? 1 : 0,
+        skipped: error || shouldFail ? 0 : 1,
         todo: 0,
         runDuration: endTime - startTime
       });
@@ -57,43 +70,46 @@
 
     async function detectMemoryLeaksWithQUnit(_, _, callback) {
       await new Promise((resolve) => {
-        QUnit.module('ember-cli-memory-leak-detector', {
+        QUnit.module(MODULE_NAME, {
           before: [],
           beforeEach: [],
           afterEach: [],
           after: []
         });
 
-        QUnit.test('detect memory leaks', Object.assign(async function(assert) {
+        QUnit.test(TEST_NAME, Object.assign(async function(assert) {
           let title = encodeURI(document.title);
           let response = await fetch(`/detect_memory_leak?title=${title}`);
           let json = await response.json();
 
-          if (json.error) {
-            throw new Error(json.error);
+          let error = json.error;
+          let shouldFail = json.failWithLeakedClasses;
+          let hasLeaks = json.leakedClasses && json.leakedClasses.length;
+          let hasIgnoredLeaks = json.ignoredLeakedClasses && json.ignoredLeakedClasses.length;
+
+          if (error) {
+            throw new Error(error);
           }
 
-          let hasErrors = json.errorClasses && json.errorClasses.length;
-          let hasWarnings = json.warningClasses && json.warningClasses.length;
+          if (hasLeaks) {
+            console[shouldFail ? 'error' : 'warn'](LEAKED_CLASSES + json.leakedClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
 
-          if (hasErrors) {
-            console[json.failIfErrorClasses ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
-
-            for (const error of json.errorClasses) {
-              assert.equal(error[1], json.failIfErrorClasses ? 0 : error[1], `memory leak detected: ${error[0]} ${json.failIfErrorClasses ? '' : '(ignored)'}`)
+            for (const error of json.leakedClasses) {
+              assert.false(shouldFail ? true : false, `${DETECTION}: ${error[0]} ${shouldFail ? '' : IGNORED}`);
             }
           }
 
-          if (hasWarnings) {
-            console.warn('The following ignored classes were detected in the heap snapshot: \n' + json.warningClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+          if (hasIgnoredLeaks) {
+            console.warn(LEAKED_IGNORED_CLASSES + json.ignoredLeakedClasses.map(([name, count]) => `${name} ${count}x ${IGNORED}`).join('\n') + '\n');
 
-            for (const warning of json.warningClasses) {
-              assert.equal(warning[1], warning[1], `${warning[0]} x${warning[1]} (ignored)`)
+            for (const warning of json.ignoredLeakedClasses) {
+              assert.false(false, `${warning[0]} ${warning[1]}x ${IGNORED}`);
             }
           }
 
-          if (!hasErrors && !hasWarnings) {
-            assert.ok(true, 'No memory leaks detected');
+          if (!hasLeaks && !hasIgnoredLeaks) {
+            console.log(NO_DETECTION);
+            assert.false(false, NO_DETECTION);
           }
 
           resolve();
