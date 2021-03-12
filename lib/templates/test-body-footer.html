@@ -25,12 +25,17 @@
       let json = await response.json();
       let endTime = Date.now();
 
-      let hasErrors = json.errorClasses.length;
-      let hasWarnings = json.warningClasses.length;
+      if (json.error) {
+        throw new Error(json.error);
+      }
+
+      let hasErrors = json.errorClasses && json.errorClasses.length;
+      let hasWarnings = json.warningClasses && json.warningClasses.length;
 
       if (hasErrors) {
-        console[json.error ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+        console[json.failIfErrorClasses ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
       }
+
       if (hasWarnings) {
         console.warn('The following ignored classes were detected in the heap snapshot: \n' + json.warningClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
       }
@@ -38,12 +43,12 @@
       Testem.emit('test-result', {
         name: `ember-cli-memory-leak-detector: detect memory leaks`,
         total: 1,
-        passed: json.error && !hasErrors ? 0 : 1,
-        failed: json.error && hasErrors ? 1 : 0,
-        skipped: !json.error ? 1 : 0,
+        passed: json.failIfErrorClasses && !hasErrors ? 0 : 1,
+        failed: json.failIfErrorClasses && hasErrors ? 1 : 0,
+        skipped: !json.failIfErrorClasses ? 1 : 0,
         todo: 0,
         runDuration: endTime - startTime
-      })
+      });
 
       if (callback) {
         callback();
@@ -63,14 +68,19 @@
           let title = encodeURI(document.title);
           let response = await fetch(`/detect_memory_leak?title=${title}`);
           let json = await response.json();
-          let hasErrors = json.errorClasses.length;
-          let hasWarnings = json.warningClasses.length;
+
+          if (json.error) {
+            throw new Error(json.error);
+          }
+
+          let hasErrors = json.errorClasses && json.errorClasses.length;
+          let hasWarnings = json.warningClasses && json.warningClasses.length;
 
           if (hasErrors) {
-            console[json.error ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
+            console[json.failIfErrorClasses ? 'error' : 'warn']('The following classes were detected in the heap snapshot: \n' + json.errorClasses.map(([name, count]) => `${name} ${count}x`).join('\n') + '\n');
 
             for (const error of json.errorClasses) {
-              assert.equal(error[1], json.error ? 0 : error[1], `memory leak detected: ${error[0]} ${json.error ? '' : '(ignored)'}`)
+              assert.equal(error[1], json.failIfErrorClasses ? 0 : error[1], `memory leak detected: ${error[0]} ${json.failIfErrorClasses ? '' : '(ignored)'}`)
             }
           }
 
