@@ -103,7 +103,7 @@ Configuration
 
 'ember-cli-memory-leak-detector': {
   enabled: process.env.DETECT_MEMORY_LEAKS || false,
-  error: false,
+  failTests: false,
   remoteDebuggingPort: '9222',
   ignoreClasses: ['ExpectedLeakyClass'],
   writeSnapshot: true
@@ -112,10 +112,10 @@ Configuration
 ```
 
 1. `enabled` (default `true`)
-Set to false to disables memory leak detection. 
+Set to false to disables memory leak detection. Consider using an environment variable (`process.env.DETECT_MEMORY_LEAKS`) to control when memory leak detection is run.
 
-2. `error`: (default `true`)
-By default, an error is thrown when a leak is detected, causing test failure. Set this to false to prevent memory leaks from causing your tests to fail, and instead log a console warning.
+2. `failTests`: (default `true`)
+By default when a leak is detected we add a failed test. Set this to `false` to prevent memory leaks from causing your tests to fail, and instead log a console warning.
 
 3. `remoteDebuggingPort`: (default `9222`)
 Configures which port to connect to the testem Chrome instance. This value must match the `--remote-debugging-port` flag set in your app's `testem.js`
