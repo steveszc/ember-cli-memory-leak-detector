@@ -8,19 +8,23 @@
 
 ## Linting
 
+* `cd packages/ember-cli-memory-leak-detector`
 * `npm run lint:hbs`
 * `npm run lint:js`
 * `npm run lint:js -- --fix`
 
 ## Running tests
 
-* `npm run test:node` - Runs the node tests, which verify memory leak detection behavior.
+* `npm run test:node` - Runs the monorepo node tests, which verify memory leak detection behavior.
+
+* `cd packages/ember-cli-memory-leak-detector`
 * `ember test` – Runs the dummy app test suite on the current Ember version. Will fail with a memory leak detection.
 * `ember test --server` – Runs the dummy app test suite in "watch mode"
 * `ember try:each` – Runs the dummy app test suite against multiple Ember versions
 
 ## Running the dummy application
 
+* `cd packages/ember-cli-memory-leak-detector`
 * `ember serve`
 * Visit the dummy application at [http://localhost:4200](http://localhost:4200).
 

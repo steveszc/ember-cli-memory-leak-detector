@@ -2,13 +2,16 @@
 
 const assert = require("assert").strict;
 const execa = require("execa");
+const path = require('path');
+
+const cwd = path.join(__dirname, 'my-app');
 
 describe("Acceptance | Memory leak detection", function () {
   this.timeout(60 * 1000);
 
   it("fails tests when memory leak is detected", async function () {
     try {
-      await execa("ember", ["test"]);
+      await execa("ember", ["test"], { cwd });
     } catch ({ exitCode, stdout }) {
       assert.equal(exitCode, 1, "Exits with non-zero status code");
       assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
@@ -20,7 +23,7 @@ describe("Acceptance | Memory leak detection", function () {
 
   it("fails tests when memory leak is detected in production mode", async function () {
     try {
-      await execa("ember", ["test", "--environment=production"]);
+      await execa("ember", ["test", "--environment=production"], { cwd });
     } catch ({ exitCode, stdout }) {
       assert.equal(exitCode, 1, "Exits with non-zero status code");
       assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
@@ -31,7 +34,7 @@ describe("Acceptance | Memory leak detection", function () {
   });
 
   it("passes tests if only ignored classes are detected", async function () {
-    let { exitCode, stdout } = await execa("ember", ["test", '--filter=leaky component']);
+    let { exitCode, stdout } = await execa("ember", ["test", '--filter=leaky component'], { cwd });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
     assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
@@ -39,7 +42,7 @@ describe("Acceptance | Memory leak detection", function () {
   });
 
   it("passes tests if no memory leaks are detected", async function () {
-    let { exitCode, stdout } = await execa("ember", ["test", "--filter=nonleaky"]);
+    let { exitCode, stdout } = await execa("ember", ["test", "--filter=nonleaky"], { cwd });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
     assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
@@ -47,14 +50,16 @@ describe("Acceptance | Memory leak detection", function () {
   });
 
   it("skips detection if config.enabled is false", async function () {
-    let { exitCode, stdout } = await execa("ember", ["test"], { env: { DISABLE: true }});
+    let env = { DISABLE: true };
+    let { exitCode, stdout } = await execa("ember", ["test"], { cwd, env });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
     assert(!stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'did not run memory leak detection');
   });
 
   it("passes tests if config.failTests is false", async function () {
-    let { exitCode, stdout } = await execa("ember", ["test"], { env: { NOFAIL: true }});
+    let env = { NOFAIL: true };
+    let { exitCode, stdout } = await execa("ember", ["test"], { cwd, env });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
     assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'did run memory leak detection');
