@@ -37,7 +37,6 @@ describe("Acceptance | Memory leak detection | with custom port", function () {
     let { exitCode, stdout } = await execa("ember", ["test", '--filter=leaky component'], { cwd });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
-    assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
     assert(stdout.includes('LeakyComponent 1x (ignored)'), "Warns about the ignored LeakyComponent");
   });
 
@@ -45,7 +44,6 @@ describe("Acceptance | Memory leak detection | with custom port", function () {
     let { exitCode, stdout } = await execa("ember", ["test", "--filter=nonleaky"], { cwd });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
-    assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'ran memory leak detection');
     assert(stdout.includes('No memory leaks detected'), 'No memory leaks detected');
   });
 
@@ -62,7 +60,6 @@ describe("Acceptance | Memory leak detection | with custom port", function () {
     let { exitCode, stdout } = await execa("ember", ["test"], { cwd, env });
 
     assert.equal(exitCode, 0, "Exits with a zero status code");
-    assert(stdout.includes('ember-cli-memory-leak-detector: detect memory leaks'), 'did run memory leak detection');
     assert(stdout.includes('WARN: The following classes were retained in the heap:'), 'Warns of leaked classes');
   });
 });
