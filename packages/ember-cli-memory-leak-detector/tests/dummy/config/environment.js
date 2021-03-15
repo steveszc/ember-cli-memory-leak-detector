@@ -23,6 +23,8 @@ module.exports = function(environment) {
     },
 
     "ember-cli-memory-leak-detector": {
+      enabled: !process.env.DISABLE,
+      failTests: !process.env.NOFAIL,
       ignoreClasses: ["LeakyComponent"],
     },
   };
