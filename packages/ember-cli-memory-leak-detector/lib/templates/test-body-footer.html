@@ -1,5 +1,8 @@
 <script>
   (function () {
+    const shouldFail = {%FAIL_TESTS%};
+    const timeout = {%TIMEOUT%};
+
     const DETECTION_IS_NOT_POSSIBLE = 'Memory leak detection is currently available only in the Google Chrome browser via Testem';
     const LEAKED_CLASSES = 'The following classes were retained in the heap: \n';
     const LEAKED_IGNORED_CLASSES = 'The following ignored classes were retained in the heap: \n';
@@ -37,7 +40,6 @@
       let endTime = Date.now();
 
       let error = json.error;
-      let shouldFail = json.failWithLeakedClasses;
       let hasLeaks = json.leakedClasses && json.leakedClasses.length;
       let hasIgnoredLeaks = json.ignoredLeakedClasses && json.ignoredLeakedClasses.length;
 
@@ -78,12 +80,14 @@
         });
 
         QUnit.test(TEST_NAME, Object.assign(async function(assert) {
+          if (timeout) {
+            assert.timeout(timeout);
+          }
           let title = encodeURI(document.title);
           let response = await fetch(`/detect_memory_leak?title=${title}`);
           let json = await response.json();
 
           let error = json.error;
-          let shouldFail = json.failWithLeakedClasses;
           let hasLeaks = json.leakedClasses && json.leakedClasses.length;
           let hasIgnoredLeaks = json.ignoredLeakedClasses && json.ignoredLeakedClasses.length;
 

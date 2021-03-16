@@ -6,6 +6,7 @@ module.exports = function (/* environment, appConfig */) {
       enabled: true,
       failTests: true,
       remoteDebuggingPort: 9222,
+      timeout: null,
       ignoreClasses: [],
       writeSnapshot: false,
     },
