@@ -104,8 +104,9 @@ Configuration
 'ember-cli-memory-leak-detector': {
   enabled: process.env.DETECT_MEMORY_LEAKS || false,
   failTests: false,
-  remoteDebuggingPort: '9222',
   ignoreClasses: ['ExpectedLeakyClass'],
+  remoteDebuggingPort: '9222',
+  timeout: 90000,
   writeSnapshot: true
 }
 
@@ -114,16 +115,20 @@ Configuration
 1. `enabled` (default `true`)
 Set to false to disables memory leak detection. Consider using an environment variable (`process.env.DETECT_MEMORY_LEAKS`) to control when memory leak detection is run.
 
-2. `failTests`: (default `true`)
+1. `failTests`: (default `true`)
 By default when a leak is detected we add a failed test. Set this to `false` to prevent memory leaks from causing your tests to fail, and instead log a console warning.
 
-3. `remoteDebuggingPort`: (default `9222`)
-Configures which port to connect to the testem Chrome instance. This value must match the `--remote-debugging-port` flag set in your app's `testem.js`
-
-4. `ignoreClasses`: (default `[]`)
+1. `ignoreClasses`: (default `[]`)
 By default, the addon will discover all class names in your app and throw a test error if it detects any of them in the heap snapshot. Use this option to ignore specific classes that you expect to leak or plan to fix later. If any of these ignored classes are leaked they will be output as a warning in the test output. Note: framework-level classes such as App are ignored to avoid false positives.
 
-5. `writeSnapshot`: (default `false`)
+1. `remoteDebuggingPort`: (default `9222`)
+Configures which port to connect to the testem Chrome instance. This value must match the `--remote-debugging-port` flag set in your app's `testem.js`
+
+1. `timeout`: (number, default `null`)
+Configures the length of time, in milliseconds, to wait for the memory leak detection test to complete. This value will override any existing timeouts in your test framework. For example, QUnit has a default test timeout of 60s. If you expect memory leak detection to take longer than this it may be useful to specify a longer timeout for the memory leak detection test. 
+*Note*: Currently this timeout is only used with QUnit
+
+1. `writeSnapshot`: (default `false`)
 Set this to `true` to write the heapsnapshot to disk as `Heap.heapsnapshot`. This is helpful for fixing memory leaks, since the file can be uploaded into Chrome DevTool's Memory panel for analysis.
 
 Fixing memory leaks

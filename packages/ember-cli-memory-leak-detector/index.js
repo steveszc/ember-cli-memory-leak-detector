@@ -8,13 +8,14 @@ module.exports = {
   name: require("./package").name,
 
   contentFor(type) {
+    let { timeout, failTests } = this.readConfig();
     if (type === "test-body-footer" && this.isEnabled()) {
       const template = fs
         .readFileSync(
           path.join(__dirname, "lib", "templates", "test-body-footer.html")
         )
         .toString();
-      return template;
+      return template.replace('{%TIMEOUT%}', timeout).replace('{%FAIL_TESTS%}', failTests);
     }
 
     return undefined;

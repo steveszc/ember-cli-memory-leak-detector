@@ -25,7 +25,7 @@ function handleDetectMemoryLinkRequest(addon) {
         config.ignoreClasses.includes(name)
       );
 
-      res.json({ failWithLeakedClasses: config.failTests, leakedClasses, ignoredLeakedClasses });
+      res.json({ leakedClasses, ignoredLeakedClasses });
     } catch (error) {
       addon.ui.writeError({ message: `${addon.name}: ${error}` });
       res.json({ error: `${error}` });
