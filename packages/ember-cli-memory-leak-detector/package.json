@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-memory-leak-detector",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Automatic memory leak detection for ember apps",
   "keywords": [
     "ember-addon"
