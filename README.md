@@ -8,6 +8,8 @@ ember-cli-memory-leak-detector
 An ember-cli addon that captures and analyzes a heap snapshot after your tests have finished running in Chrome, in order to detect memory leaks.
 If any of your app's classes are retained in the heap, your tests will fail.
 
+[Watch the EmberConf 2021 Announcement Video - Ending the plague of memory leaks](https://www.youtube.com/watch?v=slIz90NHKUs)
+
 Compatibility
 ------------------------------------------------------------------------------
 
