@@ -14,6 +14,7 @@ function handleDetectMemoryLinkRequest(addon) {
         port: config.remoteDebuggingPort,
         title: decodeURI(req.query.title),
         classes: inventoryClasses(addon),
+        writeSnapshot: config.writeSnapshot,
       });
 
       const retainedClasses = results.filter(([name]) => name !== 'App');
