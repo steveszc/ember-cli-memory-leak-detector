@@ -101,17 +101,18 @@ Configuration
 ------------------------------------------------------------------------------
 
 ```js
-// config/environment.js
+// ember-cli-build.js
 
-'ember-cli-memory-leak-detector': {
-  enabled: process.env.DETECT_MEMORY_LEAKS || false,
-  failTests: false,
-  ignoreClasses: ['ExpectedLeakyClass'],
-  remoteDebuggingPort: '9222',
-  timeout: 90000,
-  writeSnapshot: true
-}
-
+let app = new EmberApp(defaults, {
+  'ember-cli-memory-leak-detector': {
+    enabled: process.env.DETECT_MEMORY_LEAKS || false,
+    failTests: false,
+    ignoreClasses: ['ExpectedLeakyClass'],
+    remoteDebuggingPort: '9222',
+    timeout: 90000,
+    writeSnapshot: true,
+  },
+});
 ```
 
 1. `enabled` (default `true`)

@@ -4,6 +4,11 @@ const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
   let app = new EmberAddon(defaults, {
+    'ember-cli-memory-leak-detector': {
+      enabled: !process.env.DISABLE,
+      failTests: !process.env.NOFAIL,
+      ignoreClasses: ['LeakyComponent'],
+    },
     'ember-cli-terser': {
       terser: {
         compress: { keep_classnames: true },
