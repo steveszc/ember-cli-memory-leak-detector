@@ -17,12 +17,6 @@ module.exports = function (environment) {
       },
     },
 
-    "ember-cli-memory-leak-detector": {
-      enabled: !process.env.DISABLE,
-      failTests: !process.env.NOFAIL,
-      ignoreClasses: ["LeakyComponent"],
-    },
-
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
