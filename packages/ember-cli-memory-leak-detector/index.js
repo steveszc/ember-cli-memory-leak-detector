@@ -1,6 +1,5 @@
 "use strict";
 
-const deprecate = require('ember-cli/lib/utilities/deprecate');
 const path = require("path");
 const fs = require("fs");
 const attachMiddleware = require("./lib/attach-middleware");
@@ -51,9 +50,8 @@ module.exports = {
     if (hostEnvConfig && this.isConfigDeprecationTriggered === false) {
       this.isConfigDeprecationTriggered = true;
 
-      deprecate(
-        'Configuring "ember-cli-memory-leak-detector" via "config/environment.js" is deprecated. Please use "ember-cli-build.js" instead.',
-        true
+      console.warn(
+        '\x1b[33mDEPRECATION: Configuring "ember-cli-memory-leak-detector" via "config/environment.js" is deprecated. Please use "ember-cli-build.js" instead.\x1b[0m'
       );
 
       return hostEnvConfig;
